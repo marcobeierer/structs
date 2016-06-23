@@ -15,7 +15,7 @@ var (
 )
 
 type Valuer interface {
-	Value() interface{}
+	Valuex() interface{}
 }
 
 // Struct encapsulates a struct type to provide several high level functions
@@ -145,7 +145,7 @@ func (s *Struct) FillMap(out map[string]interface{}) {
 
 		if tagOpts.Has("value") {
 			if v, ok := val.Interface().(Valuer); ok {
-				out[name] = v.Value()
+				out[name] = v.Valuex()
 			}
 			continue
 		}
