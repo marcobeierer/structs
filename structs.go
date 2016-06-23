@@ -14,6 +14,10 @@ var (
 	DefaultTagName = "structs" // struct's field default tag name
 )
 
+type Valuer interface {
+	Value() interface{}
+}
+
 // Struct encapsulates a struct type to provide several high level functions
 // around the struct.
 type Struct struct {
@@ -135,6 +139,13 @@ func (s *Struct) FillMap(out map[string]interface{}) {
 			s, ok := val.Interface().(fmt.Stringer)
 			if ok {
 				out[name] = s.String()
+			}
+			continue
+		}
+
+		if tagOpts.Has("value") {
+			if v, ok := val.Interface().(Valuer); ok {
+				out[name] = v.Value()
 			}
 			continue
 		}
