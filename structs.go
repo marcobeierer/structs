@@ -14,8 +14,9 @@ var (
 	DefaultTagName = "structs" // struct's field default tag name
 )
 
+// Valuer interface could be used to implement custom logic for map convertion.
 type Valuer interface {
-	Valuex() interface{}
+	StructValue() interface{}
 }
 
 // Struct encapsulates a struct type to provide several high level functions
@@ -79,6 +80,12 @@ func New(s interface{}) *Struct {
 //   // Field appears in map as key "Field" (the default), but
 //   // the field is skipped if empty.
 //   Field string `structs:",omitempty"`
+//
+// A tag value with the option of "value" uses Valuer to get the value. Example:
+//
+//	// The value will be the returned value of Animal's StructValue() function.
+//	// Map will ignore the value if Animal does not implement StructValue().
+// 	Field *Animal `structs:",value"`
 //
 // Note that only exported fields of a struct can be accessed, non exported
 // fields will be neglected.
@@ -145,7 +152,7 @@ func (s *Struct) FillMap(out map[string]interface{}) {
 
 		if tagOpts.Has("value") {
 			if v, ok := val.Interface().(Valuer); ok {
-				out[name] = v.Valuex()
+				out[name] = v.StructValue()
 			}
 			continue
 		}
